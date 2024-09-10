@@ -11,6 +11,9 @@ module.exports = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      screens: {
+        mob_screen: {min: "768px"}
+      }
     },
   },
   plugins: [],

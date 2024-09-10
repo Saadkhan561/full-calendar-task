@@ -2,6 +2,9 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
+import { IconButton } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function Home() {
   const [events, setEvents] = useState(() => {
@@ -16,9 +19,30 @@ export default function Home() {
           ];
     }
   });
+  const [headerToolbar, setHeaderToolbar] = useState({});
 
   useEffect(() => {
     localStorage.setItem("events", JSON.stringify(events));
+
+    // CODE FOR HADNELING ADD EVENT BUTTON CONDITIONALLY
+    const updateHeaderToolbar = () => {
+      if (window.innerWidth > 768) {
+        setHeaderToolbar({
+          right: "today prev,next myCustomButton",
+        });
+      } else {
+        setHeaderToolbar({
+          left: "title",
+          right: "today prev,next",
+        });
+      }
+    };
+
+    updateHeaderToolbar();
+    window.addEventListener("resize", updateHeaderToolbar);
+    return () => {
+      window.removeEventListener("resize", updateHeaderToolbar);
+    };
   }, [events]);
 
   // FUNCTION TO HANDLE EVENTS DISPLAYING ON CALENDAR
@@ -37,27 +61,34 @@ export default function Home() {
     const updatedEvents = events.map((event, index) => {
       if (event.id === parseInt(eventDropInfo.event.id)) {
         return {
-          ...event, 
-          date: eventDropInfo.event.start.toISOString().split("T")[0], 
+          ...event,
+          date: eventDropInfo.event.start.toISOString().split("T")[0],
         };
       }
       return event;
     });
 
-    console.log("updated events", updatedEvents); 
-    setEvents(updatedEvents); 
+    console.log("updated events", updatedEvents);
+    setEvents(updatedEvents);
 
     if (typeof window !== "undefined") {
-      localStorage.setItem("events", JSON.stringify(updatedEvents)); 
+      localStorage.setItem("events", JSON.stringify(updatedEvents));
     }
   };
 
   return (
     <div className="flex justify-center items-center">
-      <div className="w-4/5 h-screen">
+      <div className="md:w-4/5 w-screen h-screen mt-10 relative">
         <FullCalendar
           timeZone="UTC"
           plugins={[dayGridPlugin, interactionPlugin]}
+          headerToolbar={headerToolbar}
+          customButtons={{
+            myCustomButton: {
+              text: "Add event",
+              click: () => alert("Custom button clicked!"),
+            },
+          }}
           initialView="dayGridMonth"
           events={events}
           eventContent={handleEventContent}
@@ -65,8 +96,30 @@ export default function Home() {
           droppable={true}
           eventDrop={handleEventDrop}
           height="80%"
-          style={{ width: "100%" }}
+          style={{ width: "100%", position: "relative" }}
         />
+        {/* <button className="absolute bottom-52 right-10 p-2 bg-slate-200 border rounded-lg text-slate-800 z-10 shadow-2xl mob_screen:hidden">
+          <Plus className="h-6 w-6" />
+        </button> */}
+        <IconButton
+          sx={{
+            position: "absolute",
+            bottom: "10",
+            backgroundColor: "slate",
+            borderRadius: "0.75rem",
+            color: "slategray",
+            zIndex: 10,
+            boxShadow: 4,
+            display: { xs: "inline-flex", md: "none" }, // Tailwind `mob_screen:hidden` equivalent
+            "&:hover": {
+              backgroundColor: "darkblue",
+            },
+          }}
+          color="primary"
+          aria-label="add"
+        >
+          <AddIcon />
+        </IconButton>
       </div>
     </div>
   );
