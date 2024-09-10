@@ -78,7 +78,7 @@ export default function Home() {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="md:w-4/5 w-screen h-screen mt-10 relative">
+      <div className="md:w-4/5 w-screen h-screen relative overflow-y-hidden">
         <FullCalendar
           timeZone="UTC"
           plugins={[dayGridPlugin, interactionPlugin]}
@@ -95,30 +95,14 @@ export default function Home() {
           editable={true}
           droppable={true}
           eventDrop={handleEventDrop}
-          height="80%"
-          style={{ width: "100%", position: "relative" }}
+          height="100%"
+          style={{ width: "100%", position: "relative" , overflow: "hidden"}}
         />
         {/* <button className="absolute bottom-52 right-10 p-2 bg-slate-200 border rounded-lg text-slate-800 z-10 shadow-2xl mob_screen:hidden">
           <Plus className="h-6 w-6" />
         </button> */}
-        <IconButton
-          sx={{
-            position: "absolute",
-            bottom: "10",
-            backgroundColor: "slate",
-            borderRadius: "0.75rem",
-            color: "slategray",
-            zIndex: 10,
-            boxShadow: 4,
-            display: { xs: "inline-flex", md: "none" }, // Tailwind `mob_screen:hidden` equivalent
-            "&:hover": {
-              backgroundColor: "darkblue",
-            },
-          }}
-          color="primary"
-          aria-label="add"
-        >
-          <AddIcon />
+        <IconButton className="absolute bottom-20 right-10 bg-slate-100 mob_screen:hidden z-10 rounded-xl" color="primary">
+          <AddIcon className="h-8 w-8" />
         </IconButton>
       </div>
     </div>
