@@ -3,9 +3,20 @@ import { Modal, Box } from "@mui/material";
 import { Field, Form, FormikProvider, useFormik } from "formik";
 import * as Yup from "yup";
 
-const EventForm = ({ formState, setFormState, events }) => {
+const EventForm = ({ formState, setFormState, events, setEvents }) => {
   const [counter, setCounter] = useState(events?.length+1);
-  console.log(counter)
+
+  // FUNC TO STORE EVENTS IN LOCAL STORAGE
+  const handleFrontendSubmit = (values) => {
+    console.log(counter)
+      values.id = counter;
+      const updatedEvents = [...events, {...values}]
+      localStorage.setItem("events", JSON.stringify(updatedEvents))
+      setEvents(updatedEvents)
+      setCounter(counter+1)
+    }
+
+    // FORKIK INITIALIZATION
   const formik = useFormik({
     initialValues: {
       id: "",
@@ -16,15 +27,7 @@ const EventForm = ({ formState, setFormState, events }) => {
       title: Yup.string().required("Title is required"),
       date: Yup.date().required("Date is required"),
     }),
-    onSubmit: (values) => {
-    console.log(counter)
-      values.id = counter;
-    //   console.log(values)
-      const updatedEvents = [...events, {...values}]
-      console.log(updatedEvents)
-      localStorage.setItem("events", JSON.stringify(updatedEvents))
-      setCounter(counter+1)
-    },
+    onSubmit: handleFrontendSubmit,
   });
 
   return (

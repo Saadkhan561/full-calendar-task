@@ -7,18 +7,15 @@ import AddIcon from "@mui/icons-material/Add";
 import EventForm from "@/components/eventForm";
 
 export default function Home() {
-  const [events, setEvents] = useState(() => {
-    if (typeof window !== "undefined") {
-      const storedEvents = localStorage.getItem("events");
-      return storedEvents
-        ? JSON.parse(storedEvents)
-        : [
-            { id: 1, title: "event 1", date: "2024-09-09" },
-            { id: 2, title: "event 2", date: "2024-09-10" },
-            { id: 3, title: "event 3", date: "2024-09-11" },
-          ];
-    }
-  });
+  // const [events, setEvents] = useState(() => {
+  //   if (typeof window !== "undefined") {
+  //     const storedEvents = localStorage.getItem("events");
+  //     return storedEvents
+  //       ? JSON.parse(storedEvents)
+  //       : [];
+  //   }
+  // });
+  const [events, setEvents] = useState([])
   const [headerToolbar, setHeaderToolbar] = useState({});
 
   // MODAL STATES
@@ -61,7 +58,7 @@ export default function Home() {
 
   // FUNCTION TO HANDLE THE EVENT CHANGING ON CALENDAR BY DRAGGING AND DROPPING
   const handleEventDrop = (eventDropInfo) => {
-    const updatedEvents = events.map((event, index) => {
+    const updatedEvents = events.map((event) => {
       if (event.id === parseInt(eventDropInfo.event.id)) {
         return {
           ...event,
@@ -99,9 +96,11 @@ export default function Home() {
           droppable={true}
           eventDrop={handleEventDrop}
           height="100%"
+          
           style={{ width: "100%", position: "relative", overflow: "hidden" }}
         />
         <IconButton
+          onClick={setOpen}
           className="absolute bottom-20 right-10 bg-slate-100 mob_screen:hidden z-10 rounded-xl"
           color="primary"
         >
@@ -109,7 +108,7 @@ export default function Home() {
         </IconButton>
       </div>
       <div>
-        <EventForm formState={open} setFormState={setOpen} events={events} />
+        <EventForm formState={open} setFormState={setOpen} events={events} setEvents={setEvents} />
       </div>
     </div>
   );
