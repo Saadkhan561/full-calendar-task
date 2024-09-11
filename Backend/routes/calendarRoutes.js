@@ -1,9 +1,9 @@
-const express = require('express')
-const { getEvents, postEvent } = require('../controller/calendarController')
+import express from 'express';
+import { getEvents, postEvent, updateEvent } from '../controller/calendarController.js'; 
+const router = express.Router();
 
-const router = express.Router()
+router.get('/getEvents', getEvents);
+router.post('/postEvent', postEvent);
+router.put('/updateEvent', updateEvent)
 
-router.get('/getEvents', getEvents)
-router.post('/postEvent', postEvent)
-
-module.exports = router
+export default router;

@@ -6,7 +6,12 @@ import { IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EventForm from "@/components/eventForm";
 
+// APIs IMPORTS
+import { getEvents } from "@/services/event.service";
+import { updateEvent } from "@/services/event.service";
+
 export default function Home() {
+  // STATE FOR FRONTEND IMPLEMENTATION
   // const [events, setEvents] = useState(() => {
   //   if (typeof window !== "undefined") {
   //     const storedEvents = localStorage.getItem("events");
@@ -15,14 +20,30 @@ export default function Home() {
   //       : [];
   //   }
   // });
+
+  // STATE FOR FULL STACK IMPLEMENTATION
   const [events, setEvents] = useState([])
+
+  // FULL CALENDAR TOOLBAR STATE
   const [headerToolbar, setHeaderToolbar] = useState({});
 
   // MODAL STATES
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("events", JSON.stringify(events));
+    // FOR STORING EVENTS IN LOCALSTORAGE
+    // localStorage.setItem("events", JSON.stringify(events));
+
+    // FETCHING EVENTS FROM DATABASE
+    const fetchEvents = async () => {
+      try {
+        const eventsData = await getEvents();
+        setEvents(eventsData);
+      } catch (err) {
+        console.error("Error fetching events:", err);
+      }
+    };
+    fetchEvents()
 
     // CODE FOR HADNELING ADD EVENT BUTTON CONDITIONALLY
     const updateHeaderToolbar = () => {
@@ -43,37 +64,42 @@ export default function Home() {
     return () => {
       window.removeEventListener("resize", updateHeaderToolbar);
     };
-  }, [events]);
+  }, []);
 
   // FUNCTION TO HANDLE EVENTS DISPLAYING ON CALENDAR
   const handleEventContent = (eventInfo) => {
     const formattedDate = eventInfo.event.start.toISOString().split("T")[0];
     return (
-      <div>
+      <div className="bg-blue-500 text-white w-full p-1 rounded-lg">
         <p>{eventInfo.event.title}</p>
         <p>{formattedDate}</p>
       </div>
     );
   };
 
-  // FUNCTION TO HANDLE THE EVENT CHANGING ON CALENDAR BY DRAGGING AND DROPPING
-  const handleEventDrop = (eventDropInfo) => {
-    const updatedEvents = events.map((event) => {
-      if (event.id === parseInt(eventDropInfo.event.id)) {
-        return {
-          ...event,
-          date: eventDropInfo.event.start.toISOString().split("T")[0],
-        };
-      }
-      return event;
-    });
+  // // FUNCTION TO HANDLE THE EVENT CHANGING ON CALENDAR BY DRAGGING AND DROPPING (LOCAL STORAGE)
+  // const handleEventDrop = (eventDropInfo) => {
+  //   const updatedEvents = events.map((event) => {
+  //     if (event.id === parseInt(eventDropInfo.event.id)) {
+  //       return {
+  //         ...event,
+  //         date: eventDropInfo.event.start.toISOString().split("T")[0],
+  //       };
+  //     }
+  //     return event;
+  //   });
 
-    console.log("updated events", updatedEvents);
-    setEvents(updatedEvents);
+  //   console.log("updated events", updatedEvents);
+  //   setEvents(updatedEvents);
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("events", JSON.stringify(updatedEvents));
-    }
+  //   if (typeof window !== "undefined") {
+  //     localStorage.setItem("events", JSON.stringify(updatedEvents));
+  //   }
+  // };
+
+  // FUNCTION TO HANDLE THE EVENT CHANGING ON CALENDAR BY DRAGGING AND DROPPING (MONGO DB)
+  const handleEventDrop = async (eventDropInfo) => {
+    updateEvent({id: eventDropInfo.event.extendedProps._id, newDate: eventDropInfo.event.start})
   };
 
   return (
@@ -96,7 +122,7 @@ export default function Home() {
           droppable={true}
           eventDrop={handleEventDrop}
           height="100%"
-          
+
           style={{ width: "100%", position: "relative", overflow: "hidden" }}
         />
         <IconButton

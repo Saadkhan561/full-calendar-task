@@ -1,4 +1,4 @@
-const mongoose =require('mongoose')
+import mongoose from "mongoose"
 
 const calendarSchema = mongoose.Schema({
     title: {
@@ -10,5 +10,5 @@ const calendarSchema = mongoose.Schema({
         required: true
     }
 })
-
-module.exports = mongoose.model("calendar-events", calendarSchema)
+const calendarEvents = mongoose.model("calendar-events", calendarSchema)
+export default calendarEvents
