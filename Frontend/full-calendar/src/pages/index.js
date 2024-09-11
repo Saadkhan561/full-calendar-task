@@ -2,9 +2,9 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
 import { IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import EventForm from "@/components/eventForm";
 
 export default function Home() {
   const [events, setEvents] = useState(() => {
@@ -20,6 +20,9 @@ export default function Home() {
     }
   });
   const [headerToolbar, setHeaderToolbar] = useState({});
+
+  // MODAL STATES
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("events", JSON.stringify(events));
@@ -86,7 +89,7 @@ export default function Home() {
           customButtons={{
             myCustomButton: {
               text: "Add event",
-              click: () => alert("Custom button clicked!"),
+              click: () => setOpen(true),
             },
           }}
           initialView="dayGridMonth"
@@ -96,14 +99,17 @@ export default function Home() {
           droppable={true}
           eventDrop={handleEventDrop}
           height="100%"
-          style={{ width: "100%", position: "relative" , overflow: "hidden"}}
+          style={{ width: "100%", position: "relative", overflow: "hidden" }}
         />
-        {/* <button className="absolute bottom-52 right-10 p-2 bg-slate-200 border rounded-lg text-slate-800 z-10 shadow-2xl mob_screen:hidden">
-          <Plus className="h-6 w-6" />
-        </button> */}
-        <IconButton className="absolute bottom-20 right-10 bg-slate-100 mob_screen:hidden z-10 rounded-xl" color="primary">
+        <IconButton
+          className="absolute bottom-20 right-10 bg-slate-100 mob_screen:hidden z-10 rounded-xl"
+          color="primary"
+        >
           <AddIcon className="h-8 w-8" />
         </IconButton>
+      </div>
+      <div>
+        <EventForm formState={open} setFormState={setOpen} events={events} />
       </div>
     </div>
   );

@@ -6,3 +6,15 @@
   --fc-title-font-size: .85em;
   --fc-button-bg-color: #3781fa;
 }
+
+.input_field {
+  @apply border border-slate-300 rounded-lg p-2 text-sm w-auto focus:outline-none
+}
+
+.modal_div {
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white rounded-lg border shadow-2xl p-8 flex flex-col gap-4
+}
+
+.button {
+  @apply p-1 rounded-lg border border-blue-500 text-blue-500 hover:bg-slate-200 duration-200 cursor-pointer w-max
+}
