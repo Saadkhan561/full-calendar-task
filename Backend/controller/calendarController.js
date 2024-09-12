@@ -26,9 +26,20 @@ export const updateEvent = async (req, res) => {
             { _id: id },
             { date: newDate }
         )
-        res.status(200).json({message: "Event updated"})
+        res.status(200).json({message: "Event updated!"})
 
     } catch (err) {
         res.status(500).json({ error: err.message })
+    }
+}
+
+export const deleteEvent = async(req, res) => {
+    const {id} = req.query
+    console.log(id)
+    try {
+        const event  = await calendarEvents.deleteOne({_id: id})
+        res.status(200).json({message: "Event deleted!"})
+    } catch(err) {
+        res.status(500).json({error: err.message})
     }
 }
