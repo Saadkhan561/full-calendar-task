@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import calendarRoutes from './routes/calendarRoutes.js'; // Use `import` for routes
+import calendarRoutes from './routes/calendarRoutes.js'; 
 
 dotenv.config();
 

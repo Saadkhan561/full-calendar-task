@@ -13,50 +13,46 @@ const EventForm = ({ formState, setFormState, events, setEvents }) => {
   const [counter, setCounter] = useState(events?.length + 1);
 
   // FUNC TO STORE EVENTS IN LOCAL STORAGE
-  const handleFrontendSubmit = (values) => {
-    console.log(counter)
-    values.id = counter;
-    values.start = new Date(values.start).toISOString();
-    values.end = new Date(values.end).toISOString();
-    const updatedEvents = [...events, { ...values }]
-    localStorage.setItem("events", JSON.stringify(updatedEvents))
-    setEvents(updatedEvents)
-    setCounter(counter + 1)
-  }
+  // const handleFrontendSubmit = (values) => {
+  //   console.log(counter)
+  //   values.id = counter;
+  //   const updatedEvents = [...events, { ...values }]
+  //   localStorage.setItem("events", JSON.stringify(updatedEvents))
+  //   setEvents(updatedEvents)
+  //   setCounter(counter + 1)
+  // }
 
   // FUCNTION TO STORE EVENTS IN DATABASE
-  // const handleSubmit = (values) =>  {
-  //   try {
-  //     postEvent(values)
-  //     setFormState(false)
-  //     toast.success("Event created successfully!", {
-  //       position: "top-center",
-  //       autoClose: 3000, 
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: false,
-  //       draggable: false,
-  //     });
-  //   } catch(err) {
-  //     console.log(err)
-  //   }
-  // }
+  const handleSubmit = (values) => {
+    console.log(values)
+    try {
+      postEvent(values);
+      toast.success("Event created successfully!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   // FORKIK INITIALIZATION
   const formik = useFormik({
     initialValues: {
       title: "",
-      // date: new Date().toISOString().split("T")[0],
-      start: new Date().toISOString().split("T")[0] + "T00:00",  // Updated to include time
+      start: new Date().toISOString().split("T")[0] + "T00:00",
       end: new Date().toISOString().split("T")[0] + "T01:00",
     },
     validationSchema: Yup.object().shape({
       title: Yup.string().required("Title is required"),
-      // date: Yup.date().required("Date is required"),
       start: Yup.date().required("Start time is required"),
       end: Yup.date().required("End time is required"),
     }),
-    onSubmit: handleFrontendSubmit,
+    onSubmit: handleSubmit,
   });
 
   return (
@@ -83,15 +79,6 @@ const EventForm = ({ formState, setFormState, events, setEvents }) => {
                   <p className="text-xs text-red-500">{formik.errors.title}</p>
                 )}
               </div>
-              {/* <div className="flex flex-col gap-2">
-                <label className="font-semibold text-gray-500" htmlFor="title">
-                  Enter date
-                </label>
-                <Field className="input_field" name="date" type="date" />
-                {formik.errors.date && (
-                  <p className="text-xs text-red-500">{formik.errors.date}</p>
-                )}
-              </div> */}
               <div className="my-5">
                 <label className="block mb-2 font-semibold" htmlFor="start">
                   Start:
@@ -114,7 +101,7 @@ const EventForm = ({ formState, setFormState, events, setEvents }) => {
                   type="datetime-local"
                   name="end"
                 />
-                {formik.errors.end  && (
+                {formik.errors.end && (
                   <p className="text-red-500">{formik.errors.end}</p>
                 )}
               </div>

@@ -16,17 +16,17 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
   // STATE FOR FRONTEND IMPLEMENTATION
-  const [events, setEvents] = useState(() => {
-    if (typeof window !== "undefined") {
-      const storedEvents = localStorage.getItem("events");
-      return storedEvents
-        ? JSON.parse(storedEvents)
-        : [];
-    }
-  });
+  // const [events, setEvents] = useState(() => {
+  //   if (typeof window !== "undefined") {
+  //     const storedEvents = localStorage.getItem("events");
+  //     return storedEvents
+  //       ? JSON.parse(storedEvents)
+  //       : [];
+  //   }
+  // });
 
   // STATE FOR FULL STACK IMPLEMENTATION
-  // const [events, setEvents] = useState([])
+  const [events, setEvents] = useState([])
 
   // FULL CALENDAR TOOLBAR STATE
   const [headerToolbar, setHeaderToolbar] = useState({});
@@ -36,18 +36,18 @@ export default function Home() {
 
   useEffect(() => {
     // FOR STORING EVENTS IN LOCALSTORAGE
-    localStorage.setItem("events", JSON.stringify(events));
+    // localStorage.setItem("events", JSON.stringify(events));
 
     // FETCHING EVENTS FROM DATABASE
-    // const fetchEvents = async () => {
-    //   try {
-    //     const eventsData = await getEvents();
-    //     setEvents(eventsData);
-    //   } catch (err) {
-    //     console.error("Error fetching events:", err);
-    //   }
-    // };
-    // fetchEvents()
+    const fetchEvents = async () => {
+      try {
+        const eventsData = await getEvents();
+        setEvents(eventsData);
+      } catch (err) {
+        console.error("Error fetching events:", err);
+      }
+    };
+    fetchEvents()
 
     // CODE FOR HADNELING ADD EVENT BUTTON CONDITIONALLY
     const updateHeaderToolbar = () => {
@@ -94,39 +94,39 @@ export default function Home() {
           <p>{formattedTime}</p>
         </div>
         {/* DELETE OPTION TO DELETE FROM THE DATABASE */}
-        {/* <div onClick={() => deleteOneEvent(id)} className="p-1 rounded-full  cursor-pointer hover:bg-blue-400 duration-200">
+        <div onClick={() => deleteOneEvent(id)} className="p-1 rounded-full  cursor-pointer hover:bg-blue-400 duration-200">
           <Trash className="h-4 w-4" />
-        </div> */}
+        </div>
       </div>
     );
   };
 
   // // FUNCTION TO HANDLE THE EVENT CHANGING ON CALENDAR BY DRAGGING AND DROPPING (LOCAL STORAGE)
-  const handleEventDrop = (eventDropInfo) => {
-    const updatedEvents = events.map((event) => {
-      if (event.id === parseInt(eventDropInfo.event.id)) {
-        return {
-          ...event,
-          start: eventDropInfo.event.start.toISOString(),
-          end: eventDropInfo.event.end.toISOString(),
-        };
-      }
-      return event;
-    });
+  // const handleEventDrop = (eventDropInfo) => {
+  //   const updatedEvents = events.map((event) => {
+  //     if (event.id === parseInt(eventDropInfo.event.id)) {
+  //       return {
+  //         ...event,
+  //         start: eventDropInfo.event.start.toISOString().replace('Z', ''),
+  //         end: eventDropInfo.event.end.toISOString().replace('Z', ''),
+  //       };
+  //     }
+  //     return event;
+  //   });
 
-    console.log("updated events", updatedEvents);
-    setEvents(updatedEvents);
+  //   console.log("updated events", updatedEvents);
+  //   setEvents(updatedEvents);
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("events", JSON.stringify(updatedEvents));
-    }
-  };
+  //   if (typeof window !== "undefined") {
+  //     localStorage.setItem("events", JSON.stringify(updatedEvents));
+  //   }
+  // };
 
 
   // FUNCTION TO HANDLE THE EVENT CHANGING ON CALENDAR BY DRAGGING AND DROPPING (MONGO DB)
-  // const handleEventDrop = async (eventDropInfo) => {
-  //   updateEvent({ id: eventDropInfo.event.extendedProps._id, newDate: eventDropInfo.event.start })
-  // };
+  const handleEventDrop = async (eventDropInfo) => {
+    updateEvent({ id: eventDropInfo.event.extendedProps._id, newStart: eventDropInfo.event.start, newEnd: eventDropInfo.event.end })
+  };
 
   return (
     <div className="flex justify-center items-center relative">
@@ -134,7 +134,7 @@ export default function Home() {
       />
       <div className="md:w-4/5 w-screen h-screen relative overflow-y-hidden">
         <FullCalendar
-          timeZone="UTC"
+          timeZone="local"
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={headerToolbar}
           customButtons={{
